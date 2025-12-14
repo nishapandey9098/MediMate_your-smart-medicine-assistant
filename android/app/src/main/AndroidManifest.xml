@@ -1,0 +1,159 @@
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+ package="com.medimate.app">
+    
+        <!-- Basic permissions -->
+
+    <uses-permission android:name="android.permission.INTERNET"/>
+    <uses-permission android:name="android.permission.CAMERA"/>
+    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE"/>
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE"/>
+    <uses-permission android:name="android.permission.READ_MEDIA_IMAGES"/>
+
+
+    <!-- ✅ ANDROID 15: Exact Alarm Permissions -->
+    <uses-permission android:name="android.permission.USE_EXACT_ALARM"/>
+    <uses-permission android:name="android.permission.SCHEDULE_EXACT_ALARM"/>
+    <uses-permission android:name="android.permission.SET_ALARM"/>
+
+
+        <!-- ✅ ANDROID 15: Notification Permissions -->
+    <uses-permission android:name="android.permission.POST_NOTIFICATIONS"/>
+    <uses-permission android:name="android.permission.VIBRATE"/>
+    <uses-permission android:name="android.permission.WAKE_LOCK"/>
+
+    <!-- Camera feature -->
+    <uses-feature android:name="android.hardware.camera" android:required="false"/>
+    <uses-feature android:name="android.hardware.camera.autofocus" android:required="false"/>
+       
+
+        <!-- ✅ OPPO: Battery & Background Permissions -->
+    <uses-permission android:name="android.permission.REQUEST_IGNORE_BATTERY_OPTIMIZATIONS"/>
+    <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED"/>
+    <uses-permission android:name="android.permission.FOREGROUND_SERVICE"/>
+    <uses-permission android:name="android.permission.FOREGROUND_SERVICE_SPECIAL_USE"/> <!-- Android 14+ -->
+    
+     <!-- ✅ OPPO: System Alert Window (for full-screen notifications) -->
+    <uses-permission android:name="android.permission.SYSTEM_ALERT_WINDOW"/>
+    <uses-permission android:name="android.permission.USE_FULL_SCREEN_INTENT"/>
+
+<!-- ✅ ANDROID 15: Declare time-sensitive alarm capability -->
+    <uses-feature
+        android:name="android.software.time_sensitive"
+        android:required="false" />
+
+    <application
+        android:label="MediMate"
+        android:name="${applicationName}"
+        android:icon="@mipmap/ic_launcher"
+        android:requestLegacyExternalStorage="true"
+        android:enableOnBackInvokedCallback="true"> 
+        
+        <activity
+            android:name=".MainActivity"
+            android:exported="true"
+            android:launchMode="singleTop"
+            android:taskAffinity=""
+            android:theme="@style/LaunchTheme"
+            android:configChanges="orientation|keyboardHidden|keyboard|screenSize|smallestScreenSize|locale|layoutDirection|fontScale|screenLayout|density|uiMode"
+            android:hardwareAccelerated="true"
+            android:windowSoftInputMode="adjustResize"
+            android:showWhenLocked="true"
+            android:turnScreenOn="true">
+            
+            <meta-data
+              android:name="io.flutter.embedding.android.NormalTheme"
+              android:resource="@style/NormalTheme"
+              />
+            
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN"/>
+                <category android:name="android.intent.category.LAUNCHER"/>
+            </intent-filter>
+        </activity>
+        
+         <!-- ✅ ADD THIS BOOT RECEIVER -->
+        <receiver
+            android:name=".BootReceiver"
+            android:enabled="true"
+            android:exported="false"
+            android:directBootAware="true">
+            <intent-filter>
+                <action android:name="android.intent.action.BOOT_COMPLETED"/>
+                <action android:name="android.intent.action.QUICKBOOT_POWERON"/>
+                <action android:name="android.intent.action.LOCKED_BOOT_COMPLETED"/>
+                <action android:name="android.intent.action.MY_PACKAGE_REPLACED"/>
+
+            </intent-filter>
+        </receiver>
+
+        <receiver
+            android:name=".AlarmReceiver"
+            android:enabled="true"
+            android:exported="false"
+            android:directBootAware="true">
+            <intent-filter>
+                <action android:name="com.medimate.app.ALARM_ACTION" />
+            </intent-filter>
+        </receiver>
+        
+        <!-- ✅ NATIVE ALARM RECEIVER - CRITICAL FOR OPPO -->
+         <receiver 
+            android:name="com.dexterous.flutterlocalnotifications.ScheduledNotificationBootReceiver"
+            android:enabled="true"
+            android:exported="true"
+            android:directBootAware="true">
+
+            <intent-filter>
+                <action android:name="android.intent.action.BOOT_COMPLETED"/>
+                <action android:name="android.intent.action.MY_PACKAGE_REPLACED"/>
+            </intent-filter>
+        </receiver>
+
+         <!-- ✅ FLUTTER LOCAL NOTIFICATIONS BROADCAST RECEIVER -->
+        <receiver
+            android:name="com.dexterous.flutterlocalnotifications.ActionBroadcastReceiver"
+            android:enabled="true"
+            android:exported="false" />
+       
+        
+
+        <meta-data
+            android:name="flutterEmbedding"
+            android:value="2" />
+
+          <!-- ✅ ANDROID 15: Link to exact alarm permission declaration -->
+        <meta-data
+            android:name="android.permission.SCHEDULE_EXACT_ALARM"
+            android:resource="@xml/exact_alarm_permission" />
+        
+        <!-- ✅ ANDROID 15: Declare time-sensitive capability -->
+        <meta-data
+            android:name="android.software.time_sensitive"
+            android:value="true" />  
+
+    </application>
+    
+    <!-- Queries for camera -->
+    <queries>
+        <intent>
+            <action android:name="android.media.action.IMAGE_CAPTURE" />
+        </intent>
+         <intent>
+            <action android:name="android.intent.action.GET_CONTENT" />
+        </intent>
+
+         <!-- ✅ ADD THESE 2 INTENTS FOR OPPO SETTINGS ACCESS -->
+        <intent>
+            <action android:name="android.settings.REQUEST_IGNORE_BATTERY_OPTIMIZATIONS"/>
+        </intent>
+        <intent>
+            <action android:name="android.settings.ACTION_REQUEST_SCHEDULE_EXACT_ALARM"/>
+        </intent>
+
+         <!-- ✅ ANDROID 15: App settings -->
+        <intent>
+            <action android:name="android.settings.APPLICATION_DETAILS_SETTINGS"/>
+        </intent>
+        
+    </queries>
+</manifest>

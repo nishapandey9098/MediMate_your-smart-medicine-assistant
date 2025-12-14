@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- This declares that the app needs exact alarm capability for time-sensitive medicine reminders -->
+<exact-alarm-permission xmlns:android="http://schemas.android.com/apk/res/android">
+    <!-- Explain why this app needs exact alarms -->
+    <uses-permission
+        android:name="android.permission.SCHEDULE_EXACT_ALARM"
+        android:maxSdkVersion="32" />
+    <uses-permission
+        android:name="android.permission.USE_EXACT_ALARM" />
+</exact-alarm-permission>
